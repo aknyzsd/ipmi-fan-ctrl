@@ -1,0 +1,33 @@
+{
+  "ipmi": {
+    "ip": "192.168.152.203",
+    "user": "root",
+    "password": "${DELL_BMC_PASSWORD}"
+  },
+  "control": {
+    "target_cpu_temp": 55,
+    "emergency_temp": 80,
+    "inlet_safe_max": 40,
+    "interval": 3
+  },
+  "pid": {
+    "kp": 2.0,
+    "ki": 0.1,
+    "kd": 0.0,
+    "pwm_min": 27,
+    "pwm_max": 100
+  },
+  "feedforward": {
+    "load_kf": 0.3,
+    "delta_t_k": 1.0
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "dell_fan.log"
+  },
+  "web": {
+    "host": "0.0.0.0",
+    "port": 8089
+  },
+  "probes": []
+}

@@ -1,0 +1,2 @@
+pyghmi>=1.6
+# PySide6>=6.8,<6.9  # 桌面GUI(已弃用,改用WebUI)
