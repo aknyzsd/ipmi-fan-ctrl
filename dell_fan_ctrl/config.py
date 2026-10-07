@@ -12,7 +12,7 @@ from configparser import ConfigParser, Error as _CfgError
 
 _ENV_PATTERN = re.compile(r"\$\{([A-Z_][A-Z0-9_]*)\}")
 
-PWM_HARM_FLOOR = 0
+PWM_HARM_FLOOR = 10
 
 CONFIG_DIR = os.path.join(os.path.expanduser("~"), "dell_fan_ctrl")
 DEFAULT_CONFIG_PATH = os.path.join(CONFIG_DIR, "config.json")
@@ -27,6 +27,7 @@ class Config:
     ip: str
     user: str
     password: str
+    ipmi_mode: str
     target_cpu_temp: float
     emergency_temp: float
     inlet_safe_max: float
@@ -58,7 +59,7 @@ def _expand_env(value: str) -> str:
 def _default_json() -> dict:
     """生成默认配置字典，首次运行时写入。"""
     return {
-        "ipmi": {"ip": "192.168.152.203", "user": "root", "password": "${DELL_BMC_PASSWORD}"},
+        "ipmi": {"ip": "192.168.152.203", "user": "root", "password": "${DELL_BMC_PASSWORD}", "mode": "network"},
         "control": {"target_cpu_temp": 55, "emergency_temp": 80, "inlet_safe_max": 40, "interval": 3},
         "pid": {"kp": 2, "ki": 0.1, "kd": 0, "pwm_min": 27, "pwm_max": 100},
         "feedforward": {"load_kf": 0.3, "delta_t_k": 1},
@@ -139,6 +140,7 @@ def load(path: str | None = None, allow_missing_password: bool = False) -> Confi
         ipmi = d["ipmi"]
         ip = ipmi["ip"]
         user = ipmi["user"]
+        ipmi_mode = ipmi.get("mode", "network")
         try:
             password = _expand_env(ipmi["password"])
         except ConfigError:
@@ -183,7 +185,7 @@ def load(path: str | None = None, allow_missing_password: bool = False) -> Confi
     if emergency_temp <= target_cpu_temp:
         raise ConfigError(f"紧急温度 {emergency_temp} 必须高于目标温度 {target_cpu_temp}")
 
-    return Config(ip=ip, user=user, password=password,
+    return Config(ip=ip, user=user, password=password, ipmi_mode=ipmi_mode,
                   target_cpu_temp=target_cpu_temp, emergency_temp=emergency_temp,
                   inlet_safe_max=inlet_safe_max, interval=interval,
                   kp=kp, ki=ki, kd=kd, pwm_min=pwm_min, pwm_max=pwm_max,
@@ -209,7 +211,7 @@ def save(path: str | None, s: dict) -> None:
         raise ConfigError(f"紧急温度必须高于目标温度")
 
     d = {
-        "ipmi": {"ip": s["ip"], "user": s["user"], "password": s["password"]},
+        "ipmi": {"ip": s["ip"], "user": s["user"], "password": s["password"], "mode": s.get("ipmi_mode", "network")},
         "control": {
             "target_cpu_temp": s["target_cpu_temp"],
             "emergency_temp": s["emergency_temp"],

@@ -42,3 +42,21 @@ class PIDController:
     def reset(self) -> None:
         self._integral = 0.0
         self._prev_error = 0.0
+
+    def preset_output(self, target_out: float, error: float) -> None:
+        """bumpless transfer：预设积分项使下次 update 输出 ≈ target_out。
+
+        切 PID 时调用，避免从动态模式的低 PWM 跳到 PID 高输出造成风扇骤响。
+        out = Kp*error + Ki*integral（d=0 因 prev_error 同步设为 error）
+        → integral = (target_out - Kp*error) / Ki
+        """
+        if self.ki != 0:
+            self._integral = (target_out - self.kp * error) / self.ki
+        else:
+            self._integral = 0.0
+        # 钳位积分项，使 Ki*integral 落在输出范围内，防 windup
+        if self.ki != 0:
+            i_min = self.out_min / self.ki
+            i_max = self.out_max / self.ki
+            self._integral = max(i_min, min(i_max, self._integral))
+        self._prev_error = error

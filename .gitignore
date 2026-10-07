@@ -33,3 +33,10 @@ test_page.html
 # OS
 Thumbs.db
 Desktop.ini
+
+# WebUI 构建产物与依赖（本地 npm run build 生成）
+webui/node_modules/
+webui/dist/
+webui/*.tsbuildinfo
+webui/vite.config.d.ts
+webui/vite.config.js
