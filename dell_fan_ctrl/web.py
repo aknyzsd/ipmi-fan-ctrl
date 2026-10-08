@@ -24,8 +24,25 @@ from .thermal import StrategyResult
 
 logger = logging.getLogger(__name__)
 
-# React 构建产物目录：dell_fan_ctrl/../webui/dist
-_DIST_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "webui", "dist"))
+# React 构建产物目录解析顺序：
+#   1. PyInstaller 单文件内嵌（sys._MEIPASS/webui/dist）
+#   2. 源码开发布局（dell_fan_ctrl/../webui/dist）
+#   3. PyInstaller onedir/exe 同级（exe 旁的 webui/dist，便于外置更新前端）
+def _resolve_dist_dir() -> str:
+    candidates = []
+    meipass = getattr(sys, "_MEIPASS", None)
+    if meipass:
+        candidates.append(os.path.join(meipass, "webui", "dist"))
+    candidates.append(os.path.join(os.path.dirname(__file__), "..", "webui", "dist"))
+    if getattr(sys, "frozen", False):
+        candidates.append(os.path.join(os.path.dirname(sys.executable), "webui", "dist"))
+    for c in candidates:
+        norm = os.path.normpath(c)
+        if os.path.isdir(norm):
+            return norm
+    return os.path.normpath(candidates[1])
+
+_DIST_DIR = _resolve_dist_dir()
 
 
 # ─── 共享状态 ───────────────────────────────────────────────
@@ -104,51 +121,61 @@ class ControllerThread(threading.Thread):
 
     def run(self):
         try:
-            self.controller = Controller(self.cfg, quiet_mode=self.quiet_mode)
-        except IpmiError as e:
-            self.state.add_log(f"连接失败: {e}")
-            self.state.push("status", {"running": False, "error": str(e)})
-            return
-
-        try:
-            self.controller.client.disable_auto()
-            self.state.add_log("已关闭 iDRAC 自动控制，接管手动")
-            self.state.push("status", {"running": True})
-        except IpmiError as e:
-            self.state.add_log(f"无法接管: {e}")
-            self.state.push("status", {"running": False, "error": str(e)})
-            return
-
-        # 启动时自动跑一遍风扇标定（约35秒），已有标定数据则跳过
-        if not self.controller.calibrator.has_data:
-            self.state.add_log("首次启动，开始风扇标定…")
-            self.controller.calibrator.calibrate(self.controller.client)
             try:
-                self.controller.client.set_pwm(self.cfg.pwm_min)
-            except IpmiError:
-                pass
-            self.state.add_log("风扇标定完成")
-
-        while not self._stop.is_set():
-            t0 = time.monotonic()
-            try:
-                if self.controller._calibrating:
-                    # 手动标定进行中，暂停策略只等待
-                    if self._stop.wait(1.0):
-                        break
-                    continue
-                result = self.controller.step()
-                self.state.latest_result = result
-                self.state.push("data", self._result_dict(result))
-                if result.reason:
-                    self.state.add_log(result.reason)
+                self.controller = Controller(self.cfg, quiet_mode=self.quiet_mode)
             except IpmiError as e:
-                self.state.add_log(f"采样失败（保持上次 PWM）: {e}")
-            if self._stop.wait(max(0.5, self.cfg.interval - (time.monotonic() - t0))):
-                break
+                self.state.add_log(f"连接失败: {e}")
+                self.state.push("status", {"running": False, "error": str(e)})
+                return
 
-        self.controller.shutdown()
-        self.state.add_log("已停止，风扇设回手动安全值")
+            try:
+                self.controller.client.disable_auto()
+                self.state.add_log("已关闭 iDRAC 自动控制，接管手动")
+                self.state.push("status", {"running": True})
+            except IpmiError as e:
+                self.state.add_log(f"无法接管: {e}")
+                self.state.push("status", {"running": False, "error": str(e)})
+                return
+
+            # 启动时自动跑一遍风扇标定（约35秒），已有标定数据则跳过
+            if not self.controller.calibrator.has_data:
+                self.state.add_log("首次启动，开始风扇标定…")
+                self.controller.calibrator.calibrate(self.controller.client)
+                try:
+                    self.controller.client.set_pwm(self.cfg.pwm_min)
+                except IpmiError:
+                    pass
+                self.state.add_log("风扇标定完成")
+
+            while not self._stop.is_set():
+                t0 = time.monotonic()
+                try:
+                    if self.controller._calibrating:
+                        # 手动标定进行中，暂停策略只等待
+                        if self._stop.wait(1.0):
+                            break
+                        continue
+                    result = self.controller.step()
+                    self.state.latest_result = result
+                    self.state.push("data", self._result_dict(result))
+                    if result.reason:
+                        self.state.add_log(result.reason)
+                except IpmiError as e:
+                    self.state.add_log(f"采样失败（保持上次 PWM）: {e}")
+                if self._stop.wait(max(0.5, self.cfg.interval - (time.monotonic() - t0))):
+                    break
+
+            self.controller.shutdown()
+            self.state.add_log("已停止，风扇设回手动安全值")
+        finally:
+            # 确保所有退出路径都同步状态 + 释放 BMC session
+            self.state.running = False
+            self.state.push("status", {"running": False})
+            if self.controller and self.controller.client:
+                try:
+                    self.controller.client.close()
+                except Exception:
+                    pass
 
     def stop(self):
         self._stop.set()

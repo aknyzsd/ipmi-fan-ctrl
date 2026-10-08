@@ -1,0 +1,68 @@
+{
+  "calibration": {
+    "10": {
+      "Fan1 RPM": 3000.0,
+      "Fan2 RPM": 4800.0,
+      "Fan3 RPM": 3000.0,
+      "Fan4 RPM": 2880.0,
+      "Fan5 RPM": 5040.0,
+      "Fan6 RPM": 3000.0
+    },
+    "20": {
+      "Fan1 RPM": 4680.0,
+      "Fan2 RPM": 5040.0,
+      "Fan3 RPM": 4680.0,
+      "Fan4 RPM": 4560.0,
+      "Fan5 RPM": 5040.0,
+      "Fan6 RPM": 4680.0
+    },
+    "30": {
+      "Fan1 RPM": 6360.0,
+      "Fan2 RPM": 6360.0,
+      "Fan3 RPM": 6360.0,
+      "Fan4 RPM": 6240.0,
+      "Fan5 RPM": 6480.0,
+      "Fan6 RPM": 6360.0
+    },
+    "50": {
+      "Fan1 RPM": 9600.0,
+      "Fan2 RPM": 9960.0,
+      "Fan3 RPM": 9600.0,
+      "Fan4 RPM": 9480.0,
+      "Fan5 RPM": 10080.0,
+      "Fan6 RPM": 9600.0
+    },
+    "70": {
+      "Fan1 RPM": 12840.0,
+      "Fan2 RPM": 12840.0,
+      "Fan3 RPM": 12840.0,
+      "Fan4 RPM": 12840.0,
+      "Fan5 RPM": 12720.0,
+      "Fan6 RPM": 12960.0
+    },
+    "90": {
+      "Fan1 RPM": 15840.0,
+      "Fan2 RPM": 15840.0,
+      "Fan3 RPM": 15960.0,
+      "Fan4 RPM": 15960.0,
+      "Fan5 RPM": 15840.0,
+      "Fan6 RPM": 16200.0
+    },
+    "100": {
+      "Fan1 RPM": 15840.0,
+      "Fan2 RPM": 16920.0,
+      "Fan3 RPM": 15960.0,
+      "Fan4 RPM": 16560.0,
+      "Fan5 RPM": 16920.0,
+      "Fan6 RPM": 16320.0
+    }
+  },
+  "health": {
+    "Fan5 RPM": "ok",
+    "Fan3 RPM": "ok",
+    "Fan4 RPM": "ok",
+    "Fan2 RPM": "ok",
+    "Fan6 RPM": "ok",
+    "Fan1 RPM": "ok"
+  }
+}

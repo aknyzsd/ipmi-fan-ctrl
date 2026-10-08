@@ -1,0 +1,123 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '版本 tag（如 v1.1，留空则用当前日期）'
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact: ipmi-fan-ctrl-linux-x64
+            pyinstaller_bin: ipmi-fan-ctrl
+            add_data_sep: ':'
+          - os: windows-latest
+            artifact: ipmi-fan-ctrl-windows-x64
+            pyinstaller_bin: ipmi-fan-ctrl.exe
+            add_data_sep: ';'
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 装 Node 并构建前端
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: webui/package-lock.json
+
+      - run: npm ci
+        working-directory: webui
+      - run: npm run build
+        working-directory: webui
+
+      - name: 装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - run: pip install -r requirements.txt pyinstaller
+
+      - name: 生成启动入口
+        run: |
+          cat > entry.py <<'EOF'
+          from dell_fan_ctrl.__main__ import main
+          if __name__ == "__main__":
+              main()
+          EOF
+        shell: bash
+
+      - name: PyInstaller 打包
+        run: >
+          pyinstaller --noconfirm --onefile --clean
+          --name ipmi-fan-ctrl
+          --paths .
+          --add-data "webui/dist${{ matrix.add_data_sep }}webui/dist"
+          --hidden-import pyghmi
+          --hidden-import pyghmi.ipmi
+          --collect-submodules pyghmi
+          entry.py
+
+      - name: 整理产物
+        shell: bash
+        run: |
+          mkdir -p staging
+          cp dist/${{ matrix.pyinstaller_bin }} staging/
+          cp config.example.json staging/
+          cp -r webui/dist staging/webui-dist-standalone
+          ls -la staging
+
+      - name: 打 zip
+        uses: thedoctor0/zip-release@master
+        with:
+          type: zip
+          directory: staging
+          filename: ../${{ matrix.artifact }}.zip
+
+      - name: 上传 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.artifact }}.zip
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 下载所有产物
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: 确定 tag
+        id: tag
+        run: |
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+            echo "name=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "name=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 发 Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.name }}
+          name: ${{ steps.tag.outputs.name }}
+          generate_release_notes: true
+          files: artifacts/**/*.zip

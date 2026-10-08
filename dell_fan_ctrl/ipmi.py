@@ -121,6 +121,15 @@ class IpmiClient:
             except Exception as e:
                 raise IpmiError(f"pyghmi 连接失败: {e}") from e
 
+    def close(self):
+        """显式关闭 BMC session，释放资源（防止 BMC session 耗尽）"""
+        if self._mode != "local" and self._ipmi is not None:
+            try:
+                self._ipmi.ipmi_session.logout()
+            except Exception:
+                pass
+            self._ipmi = None
+
     def read_sensors(self) -> SensorSnapshot:
         if self._mode == "local":
             text = _run_open(["sensor"], timeout=20)
