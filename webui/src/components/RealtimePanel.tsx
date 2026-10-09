@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 aknyzsd
+
 import { Card, Statistic, Tag } from 'antd';
 import { FireOutlined } from '@ant-design/icons';
 import type { Status } from '../types';

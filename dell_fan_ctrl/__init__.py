@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 aknyzsd
+
 """Dell 服务器风扇 PID 温控（重写版）。
 
 通过 IPMI over LAN 连 iDRAC/BMC，读温度/负载/功耗，

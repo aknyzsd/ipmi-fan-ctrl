@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 aknyzsd
+
 """配置加载与校验（JSON 版）。
 
 配置文件默认放 ~/dell_fan_ctrl/config.json，和代码分离。

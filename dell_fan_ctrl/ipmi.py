@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 aknyzsd
+
 """IPMI 客户端：支持网络(pyghmi)和本机(ipmitool -I open)两种模式。
 
 网络模式：pyghmi 走 RMCP+ 连 BMC，需 ip/user/password，远程或无 /dev/ipmi0 时用。

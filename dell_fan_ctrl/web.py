@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 aknyzsd
+
 """WebUI：浏览器界面 + REST API + SSE 实时推送，零依赖。
 
 用法：python -m dell_fan_ctrl.web [config.ini] [port]

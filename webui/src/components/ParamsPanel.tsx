@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 aknyzsd
+
 import { Card, Slider, InputNumber, Button, Tooltip } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import type { Params } from '../types';

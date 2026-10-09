@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 aknyzsd
+
 import { Card, Button, Tag, Space, Empty, message } from 'antd';
 import { ReloadOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { useEffect, useState, useCallback } from 'react';

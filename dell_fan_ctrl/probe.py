@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 aknyzsd
+
 """探针客户端：程序主动去拉服务器上温度/功耗探针的数据。
 
 零依赖（标准库 urllib），探针端只需实现一个 HTTP 接口即可对接。

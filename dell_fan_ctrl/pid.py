@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 aknyzsd
+
 """PID 控制器，带积分抗饱和与输出钳位。
 
 用于 CPU 温度反馈控制：error = 当前温度 - 目标温度（过热为正），

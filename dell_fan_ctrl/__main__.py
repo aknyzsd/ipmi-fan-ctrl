@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 aknyzsd
+
 """入口：加载配置、装信号处理器、优雅退出。
 
 用法：python -m dell_fan_ctrl [config.json]

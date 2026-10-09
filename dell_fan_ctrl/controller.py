@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 aknyzsd
+
 """主控循环：采样 → 策略 → 写 PWM → 日志。
 
 启动时关闭 iDRAC 自动控制拿手动权；异常/退出时交还。

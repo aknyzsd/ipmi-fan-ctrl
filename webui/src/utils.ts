@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 aknyzsd
+
 /** 数值格式化：null → '—'，数字保留 1 位小数 */
 export const fmt = (v: number | null | undefined): string =>
   v == null ? '—' : typeof v === 'number' ? v.toFixed(1) : String(v);

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 aknyzsd
+
 """风扇标定模块：启动时测多段 PWM→RPM 曲线，用于检测 iDRAC 抢权偏移和风扇健康。
 
 标定流程：设固定 PWM → 等转速稳定 → 读各风扇 RPM → 保存到 JSON。

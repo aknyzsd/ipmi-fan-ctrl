@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 aknyzsd
+
 """轻量 HTTP API（服务端）——暂未启用，后续可能做 WebUI 时复用。
 
 当前方向已改为探针客户端（见 probe.py）：程序主动去拉服务器上探针的数据。

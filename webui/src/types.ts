@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 aknyzsd
+
 // 后端 API 返回类型定义（对应 web.py 各 handler）
 
 /** 实时数据 / GET /api/status 返回 */

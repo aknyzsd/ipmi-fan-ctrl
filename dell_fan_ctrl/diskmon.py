@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 aknyzsd
+
 """硬盘温度监控：采集所有盘温度，按旋转/非旋转自动分组，纯监控不影响控制。
 
 NVMe 走 hwmon（/sys/block/nvmeN/device/hwmon*/temp1_input，毫秒级），

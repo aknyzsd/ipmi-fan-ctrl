@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 aknyzsd
+
 """PySide6 GUI：实时数据面板 + 参数调节 + 系统托盘。
 
 用法：python -m dell_fan_ctrl.gui [config.ini]

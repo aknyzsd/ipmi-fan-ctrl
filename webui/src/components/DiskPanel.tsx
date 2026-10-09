@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 aknyzsd
+
 import { Card } from 'antd';
 import type { DiskGroup } from '../types';
 
