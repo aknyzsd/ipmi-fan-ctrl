@@ -55,6 +55,16 @@ WebUI 勾选「动态模式」实时切换。
 - pyghmi（纯 Python IPMI）
 - WebUI 用 Vue 3 CDN + 标准库 http.server + SSE，零构建零额外依赖
 
+## License
+
+Copyright (C) 2026 aknyzsd
+
+本项目以 **GNU Affero General Public License v3.0 或更高版本**（AGPL-3.0-or-later）发布。
+详见 [LICENSE](LICENSE)。
+
+AGPL 是强 copyleft 协议：任何人分发或通过网络提供服务（SaaS）的本项目衍生作品，
+必须以相同协议开源全部源代码。
+
 ## Disclaimer
 
 本项目为个人开源项目，非官方、不关联 Dell Technologies。
