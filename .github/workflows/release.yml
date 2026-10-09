@@ -78,6 +78,7 @@ jobs:
           mkdir -p staging
           cp dist/${{ matrix.pyinstaller_bin }} staging/
           cp config.example.json staging/
+          cp LICENSE staging/
           cp -r webui/dist staging/webui-dist-standalone
           ls -la staging
 
